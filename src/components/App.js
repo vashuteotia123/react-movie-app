@@ -2,7 +2,7 @@ import React from "react";
 import { data } from "../data";
 import Navbar from "./Navbar";
 import MovieCard from "./MovieCard";
-import { addMovie } from "../actions";
+import { addMovie, show_favourite } from "../actions";
 
 class App extends React.Component {
   componentDidMount() {
@@ -14,22 +14,54 @@ class App extends React.Component {
     store.dispatch(addMovie(data));
     console.log("STATE", this.props.store.getState());
   }
+  isMovieFavorite = (movie) => {
+    const { favourites } = this.props.store.getState();
+    const index = favourites.indexOf(movie);
+    if (index !== -1) {
+      //found the movie
+      return true;
+    }
+    return false;
+  };
+  onChangeTab = (val) => {
+    this.props.store.dispatch(show_favourite(val));
+  };
+
   render() {
-    const { list } = this.props.store.getState();
+    const { list, favourites, showfavourites } = this.props.store.getState();
     console.log("RENDER", this.props.store.getState());
+    const displayMovie = showfavourites ? favourites : list;
     return (
       <div className="App">
         <Navbar />
         <div className="main">
           <div className="tabs">
-            <div className="tab">Movies</div>
-            <div className="tab">Favourites</div>
+            <div
+              className={`tab ${showfavourites ? "" : "active-tabs"}`}
+              onClick={() => this.onChangeTab(false)}
+            >
+              Movies
+            </div>
+            <div
+              className={`tab ${showfavourites ? "active-tabs" : ""}`}
+              onClick={() => this.onChangeTab(true)}
+            >
+              Favourites
+            </div>
           </div>
           <div className="list">
-            {list.map((movie, index) => (
-              <MovieCard movie={movie} key={index} />
+            {displayMovie.map((movie, index) => (
+              <MovieCard
+                movie={movie}
+                key={index}
+                dispatch={this.props.store.dispatch}
+                isFavorite={this.isMovieFavorite(movie)}
+              />
             ))}
           </div>
+          {displayMovie.length == 0 ? (
+            <div className="no-movies"> "No movies to display"</div>
+          ) : null}
         </div>
       </div>
     );
