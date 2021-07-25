@@ -1,38 +1,39 @@
 import React from "react";
-import { addFavourite, unfavourite } from "../actions";
+
+import { addFavourite, removeFromFav } from "../actions";
 
 class MovieCard extends React.Component {
-  handleFavoriteClick = () => {
+  handleFavouriteClick = () => {
     const { movie } = this.props;
     this.props.dispatch(addFavourite(movie));
   };
-  handleUnFavoriteClick = () => {
+  handleUnFavClick = () => {
     const { movie } = this.props;
-    this.props.dispatch(unfavourite(movie));
+    this.props.dispatch(removeFromFav(movie));
   };
   render() {
-    const { movie, isFavorite } = this.props;
+    const { movie } = this.props;
     return (
       <div className="movie-card">
         <div className="left">
-          <img alt="movie-poster" src={movie.Poster} />
+          <img alt="Movie Poster" src={movie.Poster} />
         </div>
         <div className="right">
           <div className="title">{movie.Title}</div>
           <div className="plot">{movie.Plot}</div>
           <div className="footer">
             <div className="rating">{movie.imdbRating}</div>
-            {isFavorite ? (
+            {this.props.isFavourite ? (
               <button
                 className="unfavourite-btn"
-                onClick={this.handleUnFavoriteClick}
+                onClick={this.handleUnFavClick}
               >
-                Unfavourite
+                UnFavourite
               </button>
             ) : (
               <button
                 className="favourite-btn"
-                onClick={this.handleFavoriteClick}
+                onClick={this.handleFavouriteClick}
               >
                 Favourite
               </button>
